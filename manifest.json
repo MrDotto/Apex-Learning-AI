@@ -1,0 +1,24 @@
+{
+  "manifest_version": 3,
+  "name": "Apex learning AI",
+  "version": "1.0",
+  "permissions": ["scripting", "activeTab", "storage", "tabs"],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "run_at": "document_start",
+      "matches": ["https://course.apexlearning.com/public/activity/*"],
+      "js": ["content_script.js"]
+    }
+  ],
+  "action": {
+    "default_popup": "AIAutoFill.html"
+  },
+  "icons": {
+    "16": "extensionLogo.png",
+    "48": "extensionLogo.png",
+    "128": "extensionLogo.png"
+  }
+}
