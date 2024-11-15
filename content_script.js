@@ -59,16 +59,20 @@ chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
 
             await delay(1000);
             document.querySelector("button[type=submit]").click();
-
-            await delay(500);
-            document.querySelector("button[type=submit]").addEventListener("click", async (e) => {
-                if (data.questionsLeft[0] == data.questionsLeft[1]) {
-                    chrome.runtime.sendMessage({ action: "done" })
-                } else {
-                    await delay(5000);
-                    AIFill();
+            
+            while (true) {
+                if (document.querySelector("button[type=submit]")) {
+                    document.querySelector("button[type=submit]").addEventListener("click", async (e) => {
+                        if (data.questionsLeft[0] == data.questionsLeft[1]) {
+                            chrome.runtime.sendMessage({ action: "done" })
+                        } else {
+                            await delay(5000);
+                            AIFill();
+                        }
+                    });
+                    break;
                 }
-            });
+            }
         }
     } catch (a) {
 
