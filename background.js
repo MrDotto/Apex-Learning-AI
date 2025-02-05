@@ -30,7 +30,7 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
             headers: {
                 "accept": "application/json",
                 "content-type": "application/json",
-                "authorization": "Bearer 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"
+                "authorization": "Bearer [Redacted]"
             },
             method: "POST",
             body: JSON.stringify({
