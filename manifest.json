@@ -4,17 +4,21 @@
   "version": "1.0",
   "permissions": ["scripting", "activeTab", "storage", "tabs", "webNavigation"],
   "background": {
-    "service_worker": "background.js"
+    "service_worker": "newBackground.js"
   },
+  "host_permissions": [
+    "https://course.apexlearning.com/*",
+    "https://api.groq.com/*"
+  ],
   "content_scripts": [
     {
-      "run_at": "document_start",
-      "matches": ["https://course.apexlearning.com/public/activity/*"],
-      "js": ["content_script.js"]
+        "matches": ["https://course.apexlearning.com/*"],
+        "js": ["newContent_script.js"],
+        "run_at": "document_idle"
     }
   ],
   "action": {
-    "default_popup": "AIAutoFill.html"
+    "default_popup": "newAIAutoFill.html"
   },
   "icons": {
     "16": "extensionLogo.png",
