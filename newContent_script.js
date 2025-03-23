@@ -82,8 +82,8 @@ function handleAIResponse(message) {
                 chrome.runtime.sendMessage({ action: "done" });
 
                 if (fullyAutomatic) {
-                    await delay(1000);
-                    AIFill();
+                    await delay(2000);
+                    AIFill()
                 }
                 
             }
