@@ -1,3 +1,5 @@
+
+// inject ContentScript to webpage
 chrome.webNavigation.onHistoryStateUpdated.addListener((details) => {
     if (details.url.includes("course.apexlearning.com/public/activity")) {
         chrome.tabs.sendMessage(details.tabId, { action: "ping" }, (response) => {
@@ -5,18 +7,14 @@ chrome.webNavigation.onHistoryStateUpdated.addListener((details) => {
                 chrome.scripting.executeScript({
                     target: { tabId: details.tabId },
                     files: ['newContent_script.js'],
-                }, () => {
-                    console.log("Content script injected");
-                });
-            } else {
-                console.log("Content script already injected");
+                })
             }
         });
     }
 });
 
+// Wait on backend for question so AI can respond
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-    // Return true to indicate we'll respond asynchronously
     (async () => {
         try {
             const apiResponse = await fetch("https://api.groq.com/openai/v1/chat/completions", {
@@ -45,7 +43,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
                 const responseContent = result.choices[0].message.content.toString()
                     .replace(/<think>.*?<\/think>/gs, '')
                     .replace(/[^0-9]/g, '');
-                // Use sendResponse here
+                // send responce back to client
                 sendResponse({ request, result: responseContent });
             } else {
                 console.error({ error: "Unexpected API response structure", result });
@@ -56,6 +54,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
             sendResponse({ error: e.message });
         }
     })();
-    // Return true to keep the message channel open
+    
+    // Keep channel from closing
     return true;
 });
