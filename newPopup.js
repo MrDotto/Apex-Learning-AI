@@ -23,6 +23,15 @@ btn.addEventListener("click", () => {
     });
 });
 
+document.querySelector("#fullyAutomatic").addEventListener("click", ((e) => {
+    if (!document.querySelector("#fullyAutomatic").checked) {
+        // reload
+        chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+            chrome.tabs.reload(tabs[0].id);
+        });
+    }
+}));
+
 // check for AI status
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     if (message.action === "done") {

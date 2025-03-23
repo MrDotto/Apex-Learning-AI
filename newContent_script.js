@@ -1,5 +1,4 @@
-var data = {},
-    fullyAutomatic = false;
+var data = {};
 
 // Allow copying of selected text with 'C' key
 document.addEventListener('keydown', function(e) {
@@ -17,20 +16,22 @@ document.addEventListener('keydown', function(e) {
 });
 
 // Get details from page, the question
-async function AIFill() {
+async function AIFill(fullyAutomatic) {
     try {
         let x = document.querySelector("button[type=submit]");
 
-        if (x.innerText == 'NEXT QUESTION') { // if Auto on, continue
-            x.click();
-            await delay(1000);
-        } else if (x.innerText == 'VIEW SUMMERY') { // ENd of test, click view Summery auto
-            x.click();
-            await delay(1000);
+        if (!x.innerText == 'SUBMIT') {
+            if (x.innerText == 'NEXT QUESTION') { // if Auto on, continue
+                x.click();
+                await delay(1000);
+            } else if (x.innerText == 'VIEW SUMMERY') { // ENd of test, click view Summery auto
+                x.click();
+                await delay(1000);
 
-            fullyAutomatic = false;
-        } else {
-            fullyAutomatic = false;
+                fullyAutomatic = false;
+            } else {
+                fullyAutomatic = false;
+            }
         }
 
         let questionsLeft = document.querySelector("body > kp-app > kp-platform > kp-app-shell > mat-sidenav-container > mat-sidenav-content > kp-main > main > rt-activity-sia > kp-content-lane > div > form > div > h2").innerText.replace(/[^\d\s]/g, "").replace(/\s+/g, " ").trim().split(' ');
@@ -74,7 +75,7 @@ async function AIFill() {
                         console.error("Runtime error:", chrome.runtime.lastError);
                         return;
                     }
-                    handleAIResponse(response);
+                    handleAIResponse(response, fullyAutomatic);
                 });
             }
         }
@@ -82,7 +83,7 @@ async function AIFill() {
 }
 
 // get AI response and pick the correct answer
-function handleAIResponse(message) {
+function handleAIResponse(message, fullyAutomatic) {
     (async () => {
         try {
             if (message.error) {
@@ -107,8 +108,14 @@ function handleAIResponse(message) {
                 });
 
                 if (fullyAutomatic) {
+                    await delay(1000);
+                    const submitButton = document.querySelector("button[type=submit]");
+                    if (submitButton) {
+                        submitButton.click();
+                    }
+
                     await delay(2000);
-                    AIFill()
+                    AIFill(fullyAutomatic)
                 }
 
             }
@@ -129,10 +136,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         });
         return false;
     } else if (message.action === "Fill") { // listen for popup.js to ask for AI fill
-        if (message.fullyAutomatic) {
-            fullyAutomatic = true;
-        }
-        AIFill();
+        AIFill(message.fullyAutomatic);
         sendResponse({
             status: "started"
         });
