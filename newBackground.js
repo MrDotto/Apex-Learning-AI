@@ -28,7 +28,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
                 },
                 method: "POST",
                 body: JSON.stringify({
-                    model: "deepseek-r1-distill-llama-70b",
+                    model: "deepseek-r1-distill-qwen-32b",
                     messages: [
                         { role: "system", content: "Follow instructions perfectly." },
                         { role: "user", content: request.AIreq }

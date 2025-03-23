@@ -4,7 +4,7 @@ btn.addEventListener("click", () => {
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
         const tab = tabs[0];
         if (tab && tab.url.includes("course.apexlearning.com/public/activity")) {
-            chrome.tabs.sendMessage(tab.id, { action: "Fill" }, (response) => {
+            chrome.tabs.sendMessage(tab.id, { action: "Fill", fullyAutomatic: document.querySelector("#fullyAutomatic").checked }, (response) => {
                 if (chrome.runtime.lastError) {
                     console.error("Content script error:", chrome.runtime.lastError.message);
                     btn.innerHTML = "Error!";

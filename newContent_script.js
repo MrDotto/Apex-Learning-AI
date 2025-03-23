@@ -1,4 +1,5 @@
-var data = {};
+var data = {},
+    fullyAutomatic = false;
 
 async function AIFill() {
     try {
@@ -6,6 +7,8 @@ async function AIFill() {
         if (x.innerText == 'NEXT QUESTION') {
             x.click();
             await delay(1000);
+        } else {
+            fullyAutomatic = false;
         }
     } catch(e) {}
     
@@ -31,7 +34,7 @@ async function AIFill() {
         });
         
         if (question !== '') {
-            const AIreq = `!!!Return ONE number in the response!!! Return only the INDEX as a single number (e.g., [0], [1], [2], etc.). Do not include any additional text, explanations, or dialogue. If the input is invalid, return [0]. Given the question: "${question}", select the single best answer from the provided options array: [${answers}].`;
+            const AIreq = `[${document.querySelector("body > kp-app > kp-platform > kp-app-shell > kp-nav-header > div.toolbar.ng-star-inserted > kp-content-lane > div > div > span.toolbar-title.ng-star-inserted").innerText}] !!!Return ONE number in the response!!! Return only the INDEX as a single number (e.g., [0], [1], [2], etc.). Do not include any additional text, explanations, or dialogue. If the input is invalid, return [0]. Given the question: "${question}", select the single best answer from the provided options array: [${answers}].`;
 
             data = {
                 question: question,
@@ -77,6 +80,12 @@ function handleAIResponse(message) {
                 }
 
                 chrome.runtime.sendMessage({ action: "done" });
+
+                if (fullyAutomatic) {
+                    await delay(1000);
+                    AIFill();
+                }
+                
             }
         } catch (e) {
             console.error("Error in content script:", e);
@@ -90,6 +99,9 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         sendResponse({ status: "alive" });
         return false;
     } else if (message.action === "Fill") {
+        if (message.fullyAutomatic) {
+            fullyAutomatic = true;
+        }
         AIFill();
         sendResponse({ status: "started" });
         return false;
